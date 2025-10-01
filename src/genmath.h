@@ -6,8 +6,16 @@
 #include<stdint.h>
 #include<time.h>
 
-double** genmatrix();
-void printm(double**);
-void freematrix();
+typedef struct Matrix
+{
+    double** mat;
+    int rows;
+    int cols;
+}Matrix;
+
+Matrix genmatrix(int ,int);
+void printm(Matrix);
+Matrix matrixproduct(Matrix ,Matrix);
+void freematrix(Matrix);
 
 #endif
