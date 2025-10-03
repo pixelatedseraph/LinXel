@@ -13,9 +13,15 @@ typedef struct Matrix
     int cols;
 }Matrix;
 
+Matrix voidmatrix(int ,int);
 Matrix genmatrix(int ,int);
 void printm(Matrix);
 Matrix matrixproduct(Matrix ,Matrix);
+Matrix matrixadd(Matrix, Matrix);
+Matrix matrixadd(Matrix, Matrix);
 void freematrix(Matrix);
-
+void scalarmultiply(int ,Matrix);
+void inplacetranspose(Matrix);
+Matrix generaltranspose(Matrix);
+Matrix transpose(Matrix);
 #endif

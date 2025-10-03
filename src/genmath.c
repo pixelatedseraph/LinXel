@@ -3,6 +3,31 @@
 #include<stdint.h>
 #include<time.h>
 #include "genmath.h"
+Matrix voidmatrix(int rows , int cols){
+    Matrix mtes;
+    mtes.rows = rows;
+    mtes.cols = cols;
+    mtes.mat = malloc(sizeof(double*) * mtes.rows);
+    if(mtes.mat == NULL) {printf("no Matrix allocated! \n"); return (Matrix){NULL,0,0};}
+    for(int i = 0 ; i < mtes.rows ; ++i ){
+        mtes.mat[i] = malloc(sizeof(double) * mtes.cols);
+        if (mtes.mat[i] == NULL) {
+            printf("no Matrix allocated! \n"); 
+            for(int k = 0 ; k < i ; ++k){
+                free(mtes.mat[k]);
+            }
+            free(mtes.mat);
+            return (Matrix){NULL,0,0};
+
+        }
+    }
+    for (int i = 0 ; i <  mtes.rows ; ++i){
+        for (int j = 0 ; j < mtes.cols ; ++j){
+            mtes.mat[i][j] = 0.0;
+        }
+    }
+    return mtes;
+}
 Matrix genmatrix(int rows , int cols){
     Matrix m;
     m.rows = rows;
@@ -55,3 +80,62 @@ Matrix matrixproduct(Matrix matA, Matrix matB){
     }
     return res;
 }
+Matrix matrixadd(Matrix matA , Matrix matB){
+    if ((matA.rows != matB.rows) || (matA.cols != matB.cols) ) {printf("Matrix Addition isnt Possible!\n"); return (Matrix){NULL,0,0} ;}
+    Matrix res = voidmatrix(matA.rows,matB.cols);
+    for (int i = 0 ; i < matA.rows  ;++i ){
+        for (int j = 0 ; i < matB.cols  ;++j ){
+            res.mat[i][j] += matA.mat[i][j] + matB.mat[i][j];
+        }   
+    }
+    return res;
+}
+Matrix matrixsub(Matrix matA , Matrix matB){
+    if ((matA.rows != matB.rows) || (matA.cols != matB.cols) ) {printf("Matrix Addition isnt Possible!\n"); return (Matrix){NULL,0,0} ;}
+    Matrix res = voidmatrix(matA.rows,matB.cols);
+    for (int i = 0 ; i < matA.rows  ;++i ){
+        for (int j = 0 ; i < matB.cols  ;++j ){
+            res.mat[i][j] -= matA.mat[i][j] + matB.mat[i][j];
+        }   
+    }
+    return res;
+}
+// in-place modification
+void scalarmultiply(int k,Matrix matA){
+    for (int i = 0 ; i < matA.rows ; ++i){
+        for (int j = 0 ; j < matA.cols ; ++j){
+            matA.mat[i][j] *= k; 
+        }
+    }
+}
+void inplacetranspose(Matrix matA){
+    int n = matA.rows ;
+    for (int i = 0 ; i < n ; ++i){
+        for (int j = i+1 ; j < n ; ++j ){
+            double temp = matA.mat[i][j];
+            matA.mat[i][j] =  matA.mat[j][i];
+            matA.mat[j][i] = temp;
+        }
+    }
+}
+Matrix generaltranspose(Matrix matA){
+    int rows = matA.cols;
+    int cols = matA.rows;
+    Matrix T = voidmatrix(rows, cols);
+    for (int i = 0 ; i < T.rows ; ++i){
+        for (int j = 0 ; j < T.cols ; ++j){
+            T.mat[i][j] = matA.mat[j][i]; 
+        }
+    }
+    return T;
+} 
+Matrix transpose(Matrix matA){
+    if (matA.rows == matA.cols){
+        inplacetranspose(matA);
+        return matA;
+    }
+    else {
+        return generaltranspose(matA);
+    }
+}
+
