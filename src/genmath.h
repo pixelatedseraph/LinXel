@@ -22,6 +22,7 @@ Matrix matrixadd(Matrix, Matrix);
 void freematrix(Matrix);
 void scalarmultiply(int ,Matrix);
 void inplacetranspose(Matrix);
-Matrix generaltranspose(Matrix);
 Matrix transpose(Matrix);
+Matrix identitymatrix(int);
+double determinant(Matrix);
 #endif

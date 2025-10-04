@@ -21,14 +21,20 @@ int main(int argc , char **argv){
     // Matrix m1 = voidmatrix(2,2);
     // printm(m1);
     // freematrix(m1);
-    Matrix m1  = genmatrix(2,3);
+    Matrix m1  = genmatrix(3,3);
     printm(m1);
     printf("-------------------------------------\n");
+    printf("%.2f\n",determinant(m1));
     //Matrix m2 = generaltranspose(m1);
     //printm(m2);
-    Matrix m2 =  transpose(m1);
-    printm(m2);
+    //Matrix m2 =  transpose(m1);
+    //printm(m2);
     freematrix(m1);
     //freematrix(m2);
+    //Matrix I = identitymatrix(3);
+    //printm(I);
+    //printf("-------------------------------------\n");
+    //printf("%.2f\n",determinant());
+    //freematrix(I);
     return 0;
 }

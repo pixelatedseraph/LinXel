@@ -2,6 +2,7 @@
 #include<stdlib.h>
 #include<stdint.h>
 #include<time.h>
+#include<math.h>
 #include "genmath.h"
 Matrix voidmatrix(int rows , int cols){
     Matrix mtes;
@@ -40,7 +41,7 @@ Matrix genmatrix(int rows , int cols){
     }
     for (int i = 0 ;  i < m.rows; ++i){
         for (int j = 0 ; j < m.cols ; ++j){
-            *(*(m.mat + i)+j) = rand();
+            *(*(m.mat + i)+j) = rand() % 11;
             }
         }
         return m;
@@ -85,7 +86,7 @@ Matrix matrixadd(Matrix matA , Matrix matB){
     Matrix res = voidmatrix(matA.rows,matB.cols);
     for (int i = 0 ; i < matA.rows  ;++i ){
         for (int j = 0 ; i < matB.cols  ;++j ){
-            res.mat[i][j] += matA.mat[i][j] + matB.mat[i][j];
+            res.mat[i][j] = matA.mat[i][j] + matB.mat[i][j];
         }   
     }
     return res;
@@ -94,8 +95,8 @@ Matrix matrixsub(Matrix matA , Matrix matB){
     if ((matA.rows != matB.rows) || (matA.cols != matB.cols) ) {printf("Matrix Addition isnt Possible!\n"); return (Matrix){NULL,0,0} ;}
     Matrix res = voidmatrix(matA.rows,matB.cols);
     for (int i = 0 ; i < matA.rows  ;++i ){
-        for (int j = 0 ; i < matB.cols  ;++j ){
-            res.mat[i][j] -= matA.mat[i][j] + matB.mat[i][j];
+        for (int j = 0 ; j < matB.cols  ;++j ){
+            res.mat[i][j] = matA.mat[i][j] - matB.mat[i][j];
         }   
     }
     return res;
@@ -138,4 +139,99 @@ Matrix transpose(Matrix matA){
         return generaltranspose(matA);
     }
 }
+Matrix identitymatrix(int size){
+    Matrix res = voidmatrix(size,size);
+    for(int i = 0 ; i < size ; ++i ){
+        for (int j = 0 ; j < size ; ++j ){
+                res.mat[i][j] = (i == j) ? 1 : 0;
+        }
+    }
+    return res;
+}
+double determinant(Matrix matA) {
+    if (matA.rows != matA.cols) {
+        printf("Not a square matrix\n");
+        return 0.0;
+    }
+    int n = matA.rows;
+    Matrix temp = voidmatrix(n, n);
+    for (int i = 0; i < n; ++i)
+        for (int j = 0; j < n; ++j)
+            temp.mat[i][j] = matA.mat[i][j];
 
+    double det = 1.0;
+    for (int i = 0; i < n; ++i) {
+        int pivot = i;
+        for (int j = i + 1; j < n; ++j) {
+            if (fabs(temp.mat[j][i]) > fabs(temp.mat[pivot][i]))
+                pivot = j;
+        }
+        if (fabs(temp.mat[pivot][i]) < 1e-9) {
+            freematrix(temp);
+            return 0.0;
+        }
+        if (pivot != i) {
+            double* tmp = temp.mat[i];
+            temp.mat[i] = temp.mat[pivot];
+            temp.mat[pivot] = tmp;
+            det *= -1;
+        }
+        det *= temp.mat[i][i];
+        for (int j = i + 1; j < n; ++j) {
+            double factor = temp.mat[j][i] / temp.mat[i][i];
+            for (int k = i; k < n; ++k)
+                temp.mat[j][k] -= factor * temp.mat[i][k];
+        }
+    }
+    freematrix(temp);
+    return det;
+}
+Matrix invert(Matrix matA){
+    if (matA.rows != matA.cols) {
+        printf("Not a square matrix\n");
+        return (Matrix){NULL,0,0};
+    }
+    int n = matA.rows;
+    Matrix aug = voidmatrix(n, 2 * n);
+    for (int i = 0; i < n; ++i) {
+        for (int j = 0; j < n; ++j) {
+            aug.mat[i][j] = matA.mat[i][j];
+        }
+        for (int j = n; j < 2 * n; ++j) {
+            aug.mat[i][j] = (i == (j - n)) ? 1.0 : 0.0;
+        }
+    }
+    for (int i = 0; i < n; ++i) {
+        int pivot = i;
+        for (int j = i + 1; j < n; ++j) {
+            if (fabs(aug.mat[j][i]) > fabs(aug.mat[pivot][i]))
+                pivot = j;
+        }
+        if (fabs(aug.mat[pivot][i]) < 1e-9) {
+            freematrix(aug);
+            printf("Matrix is singular and cannot be inverted.\n");
+            return (Matrix){NULL,0,0};
+        }
+        if (pivot != i) {
+            double* tmp = aug.mat[i];
+            aug.mat[i] = aug.mat[pivot];
+            aug.mat[pivot] = tmp;
+        }
+        double pivotVal = aug.mat[i][i];
+        for (int j = 0; j < 2 * n; ++j)
+            aug.mat[i][j] /= pivotVal;
+        for (int j = 0; j < n; ++j) {
+            if (j != i) {
+                double factor = aug.mat[j][i];
+                for (int k = 0; k < 2 * n; ++k)
+                    aug.mat[j][k] -= factor * aug.mat[i][k];
+            }
+        }
+    }
+    Matrix inv = voidmatrix(n, n);
+    for (int i = 0; i < n; ++i)
+        for (int j = 0; j < n; ++j)
+            inv.mat[i][j] = aug.mat[i][j + n];
+    freematrix(aug);
+    return inv;
+}
