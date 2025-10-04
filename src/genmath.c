@@ -85,7 +85,7 @@ Matrix matrixadd(Matrix matA , Matrix matB){
     if ((matA.rows != matB.rows) || (matA.cols != matB.cols) ) {printf("Matrix Addition isnt Possible!\n"); return (Matrix){NULL,0,0} ;}
     Matrix res = voidmatrix(matA.rows,matB.cols);
     for (int i = 0 ; i < matA.rows  ;++i ){
-        for (int j = 0 ; i < matB.cols  ;++j ){
+        for (int j = 0 ; j < matB.cols  ;++j ){
             res.mat[i][j] = matA.mat[i][j] + matB.mat[i][j];
         }   
     }
