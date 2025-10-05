@@ -101,11 +101,20 @@ Matrix matrixsub(Matrix matA , Matrix matB){
     }
     return res;
 }
-// in-place modification
-void scalarmultiply(int k,Matrix matA){
+
+Matrix scalarmultiply(int k,Matrix matA){
+    Matrix res = voidmatrix(matA.rows , matA.cols);
     for (int i = 0 ; i < matA.rows ; ++i){
         for (int j = 0 ; j < matA.cols ; ++j){
-            matA.mat[i][j] *= k; 
+            res.mat[i][j] = k * matA.mat[i][j]; 
+        }
+    }
+    return res;
+}
+void inplacescalarmultiply(int k, Matrix matA){
+    for (int i = 0; i < matA.rows; ++i) {
+        for (int j = 0; j < matA.cols; ++j) {
+            matA.mat[i][j] *= k;
         }
     }
 }

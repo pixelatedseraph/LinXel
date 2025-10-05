@@ -50,3 +50,6 @@ void test_scalarpr(){
     freematrix(matA);
 }
 
+void dotline(){
+    printf("---------------------------------------------");
+}

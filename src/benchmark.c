@@ -22,4 +22,48 @@ void benchmark(void (*fptr) (void) , const char* info , int runs){
     avg = total / runs;
     printf("%s ran for : %d times & the average time taken : %.10f \n the total time taken is : %.3f\n",info,runs,avg,total);
 }
+int parse_matrix(const char* s, int* rows ,int* cols ){
+    int res = sscanf(s,"%dx%d",rows,cols);
+    if (res != 2)
+        res = sscanf(s,"%dX%d",rows,cols);
+    if (res !=2)
+        res = sscanf(s,"%d*%d",rows,cols);
+    if (res !=2 || *rows < 0 || *cols < 0)  
+        return 0;
+    return 1;
+}
+Matrix parse_biops(Matrix matA, Matrix matB, biop op){
+    switch (op)
+    {
+    case add:
+        return matrixadd(matA,matB);
+    case sub:
+        return matrixsub(matA,matB);
+    case product:
+        return matrixproduct(matA,matB);
+    default:
+        return (Matrix){NULL,0,0};
+    }
+}
+Matrix parse_uniops(Matrix matA ,uniop op){
+    switch (op)
+    {
+    case trans:
+        return transpose(matA);
+    case inv:
+        return invert(matA);
+    case det:
+        double detm = determinant(matA);
+        Matrix res = voidmatrix(1,1);
+        if (res.mat != NULL){
+        res.mat[0][0] = detm;
+        return res;
+        }
+        else {return (Matrix) {NULL,0,0};}
+    case spr:
+        return scalarmultiply(5,matA);
+    default:
+        return (Matrix) {NULL,0,0};
+    }
+}
 

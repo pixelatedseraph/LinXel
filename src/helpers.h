@@ -9,4 +9,5 @@ void test_transpose();
 void test_determinant();
 void test_invert();
 void test_scalarpr();
+void dotline();
 #endif
