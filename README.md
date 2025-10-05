@@ -7,7 +7,7 @@
 - Create and manipulate matrices and vectors  
 - Perform operations like addition, subtraction, multiplication, and inversion  
 - Calculate determinants and other fundamental linear algebra routines  
-- Optional OpenGL visualization of matrix operations  
+- OpenGL visualization of matrix operations  
 - Easy-to-use CLI interface with argument parsing via Argtable  
 
 ## Tech Stack
