@@ -2,7 +2,8 @@ CC = gcc
 CFLAGS = -Wall -Wextra -std=c11
 SRC = src
 OBJ = $(SRC)/genmath.o $(SRC)/test.o $(SRC)/benchmark.o $(SRC)/helpers.o
-TARGET = matrix
+TARGET = linxel
+PREFIX ?= $(HOME)/bin
 
 $(TARGET): $(OBJ)
 	$(CC) $(CFLAGS) -o $(TARGET) $(OBJ)
@@ -22,7 +23,13 @@ $(SRC)/helpers.o: $(SRC)/helpers.c $(SRC)/helpers.h
 run: $(TARGET)
 	./$(TARGET)
 
+install: $(TARGET)
+	@mkdir -p $(PREFIX)
+	cp $(TARGET) $(PREFIX)
+	chmod +x $(PREFIX)/$(TARGET)
+	@echo "Installed $(TARGET) to $(PREFIX) (add $(PREFIX) to PATH if needed)"
+
 nuke: 
 	rm -f $(OBJ) $(TARGET)
 
-.PHONY: nuke run
+.PHONY: nuke install run

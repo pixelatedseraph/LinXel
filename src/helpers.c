@@ -5,23 +5,27 @@
 void test_add(){
     Matrix matA = voidmatrix(3,3);
     Matrix matB = voidmatrix(3,3);
-    matrixadd(matA,matB);
+    Matrix res = matrixadd(matA,matB);
     freematrix(matA);
     freematrix(matB);
+    freematrix(res);
 }
 void test_sub(){
     Matrix matA = voidmatrix(3,3);
     Matrix matB = voidmatrix(3,3);
+    Matrix res = matrixadd(matA,matB);
     matrixsub(matA,matB);
     freematrix(matA);
     freematrix(matB);
+    freematrix(res);
 }
 void test_product(){
     Matrix matA = voidmatrix(3,3);
     Matrix matB = voidmatrix(3,3);
-    matrixproduct(matA,matB);
+    Matrix matC = matrixproduct(matA,matB);
     freematrix(matA);
     freematrix(matB);
+    freematrix(matC);
 }
 void test_transpose(){
     Matrix matA = voidmatrix(3,3);  
