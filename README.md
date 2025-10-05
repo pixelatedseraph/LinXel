@@ -23,6 +23,6 @@
 Clone the repository:
 
 ```bash
-git clone https://github.com/yourusername/linxel.git
+git clone https://github.com/pixelatedseraph/linxel.git
 cd linxel
-make
+make 
