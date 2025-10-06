@@ -5,27 +5,28 @@
 #include"genmath.h"
 #include<argtable2.h>
 #include<string.h>
+#include<stdlib.h>
 int main(int argc , char** argv){
     struct arg_str *gen = arg_strn(
         "g",
         "generate",
         "<m * n>",
         0 ,5 ,
-        "generate upto 5 matrices of any size (eg 2x2 , 5x3 ..etc) ");
+        "generate upto 5 matrices of any size by comma-separated list (eg 2x2,3x3,4x4) ");
 
-    struct arg_int *select =  arg_intn(
+    struct arg_str *select =  arg_strn(
         "s",
         "select",
         "<idx>",
         0, 5 ,
-        "select from the list of matrices by index (1-5) "); 
+        "select from the list of matrices by comma-separated indicies (eg 1,2,3) "); 
 
     struct arg_str *ops = arg_strn(
         "o",
         "operate",
         "<op>",
         0, 1 , 
-        "choose the operation ( mul , transpose , invert , det etc) " );
+        "choose one operation from the collection 1.uniops(trans,det,inv,spr) 2.biops(product, add ,sub) " );
 
     struct arg_lit *help = arg_lit0(
         "h",
@@ -43,6 +44,12 @@ int main(int argc , char** argv){
         "p",
         "print",
         "prints all the generated matrices");
+    
+    struct arg_lit *hwid = arg_lit0(
+        "i",
+        "hwid",
+        "provides the info about cpu and gpu ");
+    
 
     struct arg_end *end = arg_end(20);
     void *argtable[] = {gen,select,ops,help,print,rep,end,NULL};
@@ -64,41 +71,87 @@ int main(int argc , char** argv){
     }
     /* handle rest of flags */
 
-    Matrix matrices[gen->count];
-    Matrix selected[select->count]; 
+    Matrix matrices[20];
+    Matrix selected[20]; 
+    int total_matrices = 0;
+    int total_selected = 0;
+    
     /* generate matrices */
     if (gen->count > 0){
-       for (int i = 0 ; i < gen->count ; ++i){
-        int rows,cols;
-            if(parse_matrix(gen->sval[i],&rows,&cols))
-                matrices[i] = genmatrix(rows,cols);
-            else{ 
-                printf("invalid format use any of the specified formats \n r*c\n rxc \n rXc");
-                return 1;
-            }
+       for (int g = 0 ; g < gen->count ; ++g){
+           char** matrix_specs;
+           int spec_count;
+           
+           if (parse_matrix_list(gen->sval[g], &matrix_specs, &spec_count)) {
+               for (int i = 0; i < spec_count && total_matrices < 20; i++) {
+                   int rows, cols;
+                   if(parse_matrix(matrix_specs[i], &rows, &cols)) {
+                       matrices[total_matrices] = genmatrix(rows, cols);
+                       total_matrices++;
+                   } else { 
+                       printf("invalid format in '%s' use any of the specified formats \n r*c\n rxc \n rXc", matrix_specs[i]);
+                       // cleanup
+                       for (int j = 0; j < spec_count; j++) free(matrix_specs[j]);
+                       free(matrix_specs);
+                       return 1;
+                   }
+               }
+               for (int i = 0; i < spec_count; i++) free(matrix_specs[i]);
+               free(matrix_specs);
+           } else {
+               // Handle single matrix specification
+               int rows, cols;
+               if(parse_matrix(gen->sval[g], &rows, &cols)) {
+                   matrices[total_matrices] = genmatrix(rows, cols);
+                   total_matrices++;
+               } else { 
+                   printf("invalid format use any of the specified formats \n r*c\n rxc \n rXc");
+                   return 1;
+               }
+           }
        }
     }
+    
     /* impl select flag */
     if (select->count > 0){
-        if(gen->count == 0){
+        if(total_matrices == 0){
         printf("You must generate matrices first!\n");
         return 1;
        }
-       for (int i = 0 ; i < select->count ; ++i){
-        int idx = select->ival[i]-1 ; //make indices 0 based 
-        if (idx >= 0 && idx < gen->count){
-            selected [i] = matrices[idx];
-        }
-        else{
-            printf("invalid index\n");
-            return 1;
-            }
+       
+       for (int s = 0; s < select->count; s++) {
+           int* indices;
+           int index_count;
+           
+           if (parse_index_list(select->sval[s], &indices, &index_count)) {
+               for (int i = 0; i < index_count && total_selected < 20; i++) {
+                   int idx = indices[i] - 1; // make indices 0 based 
+                   if (idx >= 0 && idx < total_matrices){
+                       selected[total_selected] = matrices[idx];
+                       total_selected++;
+                   } else {
+                       printf("invalid index: %d\n", indices[i]);
+                       free(indices);
+                       return 1;
+                   }
+               }
+               free(indices);
+           } else {
+               int idx = atoi(select->sval[s]) - 1;
+               if (idx >= 0 && idx < total_matrices){
+                   selected[total_selected] = matrices[idx];
+                   total_selected++;
+               } else {
+                   printf("invalid index\n");
+                   return 1;
+               }
+           }
        }
     }
 
     /* handle operations now*/
     /* parse bi ops */
-    if (ops->count > 0 && select->count ==2){
+    if (ops->count > 0 && total_selected == 2){
         if (strcmp("add",ops->sval[0])==0 || strcmp("sub",ops->sval[0])==0 || strcmp("product",ops->sval[0])==0){
             Matrix res = parse_biops(selected[0],selected[1],str_to_biop(ops->sval[0]));
             printf("First Matrix  \n");
@@ -116,7 +169,7 @@ int main(int argc , char** argv){
     }
     }
     /* parse uni ops*/
-    if (ops->count > 0 && select->count ==1 ){
+    if (ops->count > 0 && total_selected == 1 ){
         if (strcmp("trans",ops->sval[0])==0 || strcmp("inv",ops->sval[0])==0 || strcmp("det",ops->sval[0])==0 || strcmp("spr",ops->sval[0])==0){
             Matrix res = parse_uniops(selected[0],str_to_uniop(ops->sval[0]));
             printf("The Matrix \n");
@@ -130,6 +183,20 @@ int main(int argc , char** argv){
             printf("Undefined operation \n");
             return 1;
         }
+    }
+    
+    /* print matrices if invoked -p */
+    if (print->count > 0){
+        printf("Generated Matrices (%d total):\n", total_matrices);
+        for (int i = 0; i < total_matrices; i++){
+            printf("Matrix %d:\n", i+1);
+            printm(matrices[i]);
+            dotline();
+        }
+    }
+    /* handle hwid flag */
+    if(hwid-> count > 0){
+        
     }
     return 0;
 }

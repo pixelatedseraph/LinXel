@@ -2,12 +2,12 @@
 #define HELPERS_H
 #include "genmath.h"
 #include "benchmark.h"
-void test_add();
-void test_sub();
-void test_product();
-void test_transpose();
-void test_determinant();
-void test_invert();
-void test_scalarpr();
+void bench_add();
+void bench_sub();
+void bench_product();
+void bench_transpose();
+void bench_determinant();
+void bench_invert();
+void bench_scalarpr();
 void dotline();
 #endif

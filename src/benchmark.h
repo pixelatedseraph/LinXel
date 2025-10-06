@@ -27,6 +27,8 @@ uniop str_to_uniop(const char *s);
 double now ();
 void benchmark(void (*)(void), const char*, int);
 int parse_matrix(const char*, int* ,int *);
+int parse_matrix_list(const char*, char***, int*);
+int parse_index_list(const char*, int**, int*);
 Matrix parse_biops(Matrix, Matrix, biop);
 Matrix parse_uniops(Matrix,uniop);
 #endif
