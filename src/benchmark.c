@@ -66,4 +66,18 @@ Matrix parse_uniops(Matrix matA ,uniop op){
         return (Matrix) {NULL,0,0};
     }
 }
-
+biop str_to_biop(const char* s){
+    if (strcmp(s,"add")==0) return add;
+    if (strcmp(s,"sub")==0) return sub;
+    if (strcmp(s,"product")==0) return product;
+    fprintf(stderr, "Unknown operation: %s\n", s);
+    exit(1);
+}
+uniop str_to_uniop(const char *s){
+    if (strcmp(s,"trans")==0) return trans;
+    if (strcmp(s,"inv")==0) return inv;
+    if (strcmp(s,"det")==0) return det;
+    if (strcmp(s,"spr")==0) return spr;
+    fprintf(stderr, "undefined operation: %s\n", s);
+    exit(1);
+}
