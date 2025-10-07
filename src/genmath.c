@@ -101,7 +101,6 @@ Matrix matrixsub(Matrix matA , Matrix matB){
     }
     return res;
 }
-
 Matrix scalarmultiply(int k,Matrix matA){
     Matrix res = voidmatrix(matA.rows , matA.cols);
     for (int i = 0 ; i < matA.rows ; ++i){

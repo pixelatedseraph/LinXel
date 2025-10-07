@@ -7,6 +7,7 @@
 #include <string.h>
 #include "genmath.h"
 #include "benchmark.h"
+#include "helpers.h"
 #include <time.h>
 /* returns current time , call twice and diff them to get benchmark */
 double now (){
@@ -14,16 +15,19 @@ double now (){
     clock_gettime(CLOCK_MONOTONIC, &t);
     return t.tv_sec + t.tv_nsec  * 1e-9;
 }
-void benchmark(void (*fptr) (void) , const char* info , int runs){
+Matrix benchmark(Matrix (*fptr) (Matrix matA , Matrix matB) ,Matrix matA ,Matrix matB  ,const char* info , int runs){
     double total = 0.0 , avg = 0.0;
+    Matrix res;
     for (int i = 0; i < runs ; ++i ){
         double st = now();
-        fptr();
+        res = fptr(matA, matB);
         double en = now();
         total += en - st;
     }
     avg = total / runs;
     printf("%s ran for : %d times & the average time taken : %.10f \n the total time taken is : %.3f\n",info,runs,avg,total);
+    dotline();
+    return res;
 }
 int parse_matrix(const char* s, int* rows ,int* cols ){
     int res = sscanf(s,"%dx%d",rows,cols);
@@ -121,11 +125,11 @@ Matrix parse_biops(Matrix matA, Matrix matB, biop op){
     switch (op)
     {
     case add:
-        return matrixadd(matA,matB);
+        return bench_add(matA,matB);
     case sub:
-        return matrixsub(matA,matB);
+        return bench_sub(matA,matB);
     case product:
-        return matrixproduct(matA,matB);
+        return bench_product(matA,matB);
     default:
         return (Matrix){NULL,0,0};
     }

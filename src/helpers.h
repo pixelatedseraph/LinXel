@@ -2,9 +2,11 @@
 #define HELPERS_H
 #include "genmath.h"
 #include "benchmark.h"
-void bench_add();
-void bench_sub();
-void bench_product();
+// biops 
+Matrix bench_add(Matrix, Matrix);
+Matrix bench_sub(Matrix, Matrix);
+Matrix bench_product(Matrix, Matrix);
+// uniops
 void bench_transpose();
 void bench_determinant();
 void bench_invert();

@@ -6,7 +6,13 @@
 #include<argtable2.h>
 #include<string.h>
 #include<stdlib.h>
+#include<time.h>
+#include "globals.h"
+int repeat; int repc;
 int main(int argc , char** argv){
+    // Seed the random number generator for matrix generation
+    srand(time(NULL));
+    
     struct arg_str *gen = arg_strn(
         "g",
         "generate",
@@ -33,12 +39,11 @@ int main(int argc , char** argv){
         "help",
         "Lists out all flags available ");
 
-    struct arg_int *rep = arg_intn(
+    struct arg_int *rep = arg_int0(
         "r",
         "repeat",
         "<rep>",
-        0, 10000 ,
-        "repeats the operation (0-10000) ");
+        "repeats the operation (1-100000) ");
 
     struct arg_lit *print = arg_lit0(
         "p",
@@ -50,6 +55,10 @@ int main(int argc , char** argv){
         "hwid",
         "provides the info about cpu and gpu ");
     
+    struct arg_lit *parllel = arg_lit0(
+        "pa",
+        "parallel",
+        "enable parallelism computation "); 
 
     struct arg_end *end = arg_end(20);
     void *argtable[] = {gen,select,ops,help,print,rep,end,NULL};
@@ -69,6 +78,9 @@ int main(int argc , char** argv){
         arg_print_glossary(stdout,argtable,"  %-25s %s\n");
         arg_freetable(argtable,sizeof(argtable)/sizeof(argtable[0]));
     }
+    /* if repeat flag is 0*/
+     repc = rep->count;
+   
     /* handle rest of flags */
 
     Matrix matrices[20];
@@ -149,6 +161,11 @@ int main(int argc , char** argv){
        }
     }
 
+    /* handle repeat flag BEFORE operations */
+    if (rep->count > 0){
+        repeat = rep->ival[0];
+    }
+
     /* handle operations now*/
     /* parse bi ops */
     if (ops->count > 0 && total_selected == 2){
@@ -184,7 +201,7 @@ int main(int argc , char** argv){
             return 1;
         }
     }
-    
+
     /* print matrices if invoked -p */
     if (print->count > 0){
         printf("Generated Matrices (%d total):\n", total_matrices);

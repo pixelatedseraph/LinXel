@@ -25,7 +25,7 @@ typedef enum uniop{
 /* user provides string as input ,handle the conversion (convert string to enum) */
 uniop str_to_uniop(const char *s);
 double now ();
-void benchmark(void (*)(void), const char*, int);
+Matrix benchmark(Matrix(*)(Matrix,Matrix),Matrix ,Matrix ,const char*, int);
 int parse_matrix(const char*, int* ,int *);
 int parse_matrix_list(const char*, char***, int*);
 int parse_index_list(const char*, int**, int*);
