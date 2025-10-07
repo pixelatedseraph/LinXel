@@ -16,7 +16,7 @@
 - **Build Tool:** Makefile, CMAKE  
 - **Libraries:**  
   - [Argtable](https://www.argtable.org/) — CLI argument parsing  
-  - [OpenGL](https://www.opengl.org/) —  visualization and gpu benchmarking  
+  - [SYCL](https://www.khronos.org/sycl/) — gpu benchmarking  
 
 ## Installation (Linux )
 
