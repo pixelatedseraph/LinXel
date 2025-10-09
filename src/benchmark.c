@@ -29,6 +29,36 @@ Matrix benchmark(Matrix (*fptr) (Matrix matA , Matrix matB) ,Matrix matA ,Matrix
     dotline();
     return res;
 }
+Matrix singlebenchmark(Matrix (*fptr) (Matrix matA) ,Matrix matA  ,const char* info , int runs){
+    double total = 0.0 , avg = 0.0;
+    Matrix res;
+    for (int i = 0; i < runs ; ++i ){
+        double st = now();
+        res = fptr(matA);
+        double en = now();
+        total += en - st;
+    }
+    avg = total / runs;
+    printf("%s ran for : %d times & the average time taken : %.10f \n the total time taken is : %.3f\n",info,runs,avg,total);
+    dotline();
+    return res;
+}
+// for det of a matrix
+double special1singlebenchmark(double (*fptr) (Matrix matA) ,Matrix matA  ,const char* info , int runs){
+    double total = 0.0 , avg = 0.0;
+    double res;
+    for (int i = 0; i < runs ; ++i ){
+        double st = now();
+        res = fptr(matA);
+        double en = now();
+        total += en - st;
+    }
+    avg = total / runs;
+    printf("%s ran for : %d times & the average time taken : %.10f \n the total time taken is : %.3f\n",info,runs,avg,total);
+    dotline();
+    return res;
+}
+
 int parse_matrix(const char* s, int* rows ,int* cols ){
     int res = sscanf(s,"%dx%d",rows,cols);
     if (res != 2)
@@ -139,17 +169,11 @@ Matrix parse_uniops(Matrix matA ,uniop op){
     switch (op)
     {
     case trans:
-        return transpose(matA);
+        return bench_transpose(matA);
     case inv:
-        return invert(matA);
+        return bench_invert(matA);
     case det:
-        double detm = determinant(matA);
-        Matrix res = voidmatrix(1,1);
-        if (res.mat != NULL){
-        res.mat[0][0] = detm;
-        return res;
-        }
-        else {return (Matrix) {NULL,0,0};}
+        return bench_determinant(matA);
     case spr:
         return scalarmultiply(5,matA);
     default:

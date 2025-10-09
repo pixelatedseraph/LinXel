@@ -117,15 +117,25 @@ void inplacescalarmultiply(int k, Matrix matA){
         }
     }
 }
-void inplacetranspose(Matrix matA){
+Matrix inplacetranspose(Matrix matA){
     int n = matA.rows ;
-    for (int i = 0 ; i < n ; ++i){
-        for (int j = i+1 ; j < n ; ++j ){
-            double temp = matA.mat[i][j];
-            matA.mat[i][j] =  matA.mat[j][i];
-            matA.mat[j][i] = temp;
+    // Create a copy of the matrix to avoid modifying the original during benchmarking
+    Matrix result = voidmatrix(n, n);
+    // Copy the original matrix
+    for (int i = 0; i < n; ++i) {
+        for (int j = 0; j < n; ++j) {
+            result.mat[i][j] = matA.mat[i][j];
         }
     }
+    // Transpose the copy
+    for (int i = 0 ; i < n ; ++i){
+        for (int j = i+1 ; j < n ; ++j ){
+            double temp = result.mat[i][j];
+            result.mat[i][j] =  result.mat[j][i];
+            result.mat[j][i] = temp;
+        }
+    }
+    return result;
 }
 Matrix generaltranspose(Matrix matA){
     int rows = matA.cols;
@@ -140,8 +150,7 @@ Matrix generaltranspose(Matrix matA){
 } 
 Matrix transpose(Matrix matA){
     if (matA.rows == matA.cols){
-        inplacetranspose(matA);
-        return matA;
+        return inplacetranspose(matA);
     }
     else {
         return generaltranspose(matA);

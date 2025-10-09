@@ -24,8 +24,12 @@ typedef enum uniop{
 }uniop;
 /* user provides string as input ,handle the conversion (convert string to enum) */
 uniop str_to_uniop(const char *s);
+/* struct for uniops which require additional argument */
+
 double now ();
 Matrix benchmark(Matrix(*)(Matrix,Matrix),Matrix ,Matrix ,const char*, int);
+Matrix singlebenchmark(Matrix(*)(Matrix),Matrix ,const char*, int);
+double special1singlebenchmark(double(*)(Matrix) ,Matrix ,const char* ,int);
 int parse_matrix(const char*, int* ,int *);
 int parse_matrix_list(const char*, char***, int*);
 int parse_index_list(const char*, int**, int*);

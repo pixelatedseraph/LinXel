@@ -26,7 +26,7 @@ Matrix matrixsub(Matrix, Matrix);
 void freematrix(Matrix);
 Matrix scalarmultiply(int, Matrix);
 void inplacescalarmultiply(int, Matrix);
-void inplacetranspose(Matrix);
+Matrix inplacetranspose(Matrix);
 Matrix transpose(Matrix);
 Matrix identitymatrix(int);
 double determinant(Matrix);
