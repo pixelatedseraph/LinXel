@@ -18,7 +18,7 @@
   - [Argtable](https://www.argtable.org/) — CLI argument parsing  
   - [SYCL](https://www.khronos.org/sycl/) — gpu benchmarking  
 
-## Installation (Linux )
+## Installation (Linux)
 
 Clone the repository:
 
