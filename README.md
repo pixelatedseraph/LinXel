@@ -26,6 +26,9 @@ Clone the repository:
 git clone https://github.com/pixelatedseraph/linxel.git
 cd linxel
 make run
+python3 install.py
+source ~/.bashrc           # or ~/.zshrc
+linxel --help
 ```
 ## To use
 ```bash
@@ -57,4 +60,9 @@ The resultant matrix by product:
 40.00 134.00 130.00 
 21.00 32.00 41.00 
 ```
+## TO uninstall
+```bash
+python3 install.py --uninstall 
+```
+
 More features coming soon...
