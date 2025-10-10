@@ -65,4 +65,4 @@ The resultant matrix by product:
 python3 install.py --uninstall 
 ```
 
-More features coming soon...
+This Project will no longer recieve any changes from me
