@@ -32,7 +32,7 @@ int main(int argc , char** argv){
         "operate",
         "<op>",
         0, 1 , 
-        "choose one operation from the collection 1.uniops(trans,det,inv,spr) 2.biops(product, add ,sub) " );
+        "choose operation: biops(add,sub,product,hadamard,elemwise_div,matrix_equal) uniops(trans,det,inv,spr,trace,norm,rank,power,cond) " );
 
     struct arg_lit *help = arg_lit0(
         "h",
@@ -169,7 +169,8 @@ int main(int argc , char** argv){
     /* handle operations now*/
     /* parse bi ops */
     if (ops->count > 0 && total_selected == 2){
-        if (strcmp("add",ops->sval[0])==0 || strcmp("sub",ops->sval[0])==0 || strcmp("product",ops->sval[0])==0){
+        if (strcmp("add",ops->sval[0])==0 || strcmp("sub",ops->sval[0])==0 || strcmp("product",ops->sval[0])==0 ||
+            strcmp("hadamard",ops->sval[0])==0 || strcmp("elemwise_div",ops->sval[0])==0 || strcmp("matrix_equal",ops->sval[0])==0){
             Matrix res = parse_biops(selected[0],selected[1],str_to_biop(ops->sval[0]));
             printf("First Matrix  \n");
             printm(selected[0]);
@@ -187,7 +188,9 @@ int main(int argc , char** argv){
     }
     /* parse uni ops*/
     if (ops->count > 0 && total_selected == 1 ){
-        if (strcmp("trans",ops->sval[0])==0 || strcmp("inv",ops->sval[0])==0 || strcmp("det",ops->sval[0])==0 || strcmp("spr",ops->sval[0])==0){
+        if (strcmp("trans",ops->sval[0])==0 || strcmp("inv",ops->sval[0])==0 || strcmp("det",ops->sval[0])==0 || 
+            strcmp("spr",ops->sval[0])==0 || strcmp("trace",ops->sval[0])==0 || strcmp("norm",ops->sval[0])==0 ||
+            strcmp("rank",ops->sval[0])==0 || strcmp("power",ops->sval[0])==0 || strcmp("cond",ops->sval[0])==0){
             Matrix res = parse_uniops(selected[0],str_to_uniop(ops->sval[0]));
             printf("The Matrix \n");
             printm(selected[0]);

@@ -119,9 +119,7 @@ void inplacescalarmultiply(int k, Matrix matA){
 }
 Matrix inplacetranspose(Matrix matA){
     int n = matA.rows ;
-    // Create a copy of the matrix to avoid modifying the original during benchmarking
     Matrix result = voidmatrix(n, n);
-    // Copy the original matrix
     for (int i = 0; i < n; ++i) {
         for (int j = 0; j < n; ++j) {
             result.mat[i][j] = matA.mat[i][j];
@@ -251,4 +249,219 @@ Matrix invert(Matrix matA){
             inv.mat[i][j] = aug.mat[i][j + n];
     freematrix(aug);
     return inv;
+}
+
+double trace(Matrix matA) {
+    if (matA.rows != matA.cols) {
+        printf("Trace can only be calculated for square matrices\n");
+        return 0.0;
+    }
+    double tr = 0.0;
+    for (int i = 0; i < matA.rows; ++i) {
+        tr += matA.mat[i][i];
+    }
+    return tr;
+}
+
+double frobeniusnorm(Matrix matA) {
+    double sum = 0.0;
+    for (int i = 0; i < matA.rows; ++i) {
+        for (int j = 0; j < matA.cols; ++j) {
+            sum += matA.mat[i][j] * matA.mat[i][j];
+        }
+    }
+    return sqrt(sum);
+}
+
+int rank(Matrix matA) {
+    int n = matA.rows;
+    int m = matA.cols;
+    Matrix temp = voidmatrix(n, m);
+    
+    // mat cpy
+    for (int i = 0; i < n; ++i) {
+        for (int j = 0; j < m; ++j) {
+            temp.mat[i][j] = matA.mat[i][j];
+        }
+    }
+    
+    int rank = 0;
+    int row = 0;
+    
+    for (int col = 0; col < m && row < n; ++col) {
+        int pivot = row;
+        for (int i = row + 1; i < n; ++i) {
+            if (fabs(temp.mat[i][col]) > fabs(temp.mat[pivot][col])) {
+                pivot = i;
+            }
+        }
+        
+        if (fabs(temp.mat[pivot][col]) < 1e-9) {
+            continue; // Skip this column
+        }
+        
+        // swap rows if needed
+        if (pivot != row) {
+            double* tmp = temp.mat[row];
+            temp.mat[row] = temp.mat[pivot];
+            temp.mat[pivot] = tmp;
+        }
+        
+        rank++;
+        
+        // eliminate column
+        for (int i = row + 1; i < n; ++i) {
+            double factor = temp.mat[i][col] / temp.mat[row][col];
+            for (int j = col; j < m; ++j) {
+                temp.mat[i][j] -= factor * temp.mat[row][j];
+            }
+        }
+        row++;
+    }
+    
+    freematrix(temp);
+    return rank;
+}
+
+Matrix matrixpower(Matrix matA, int power) {
+    if (matA.rows != matA.cols) {
+        printf("Matrix power can only be calculated for square matrices\n");
+        return (Matrix){NULL, 0, 0};
+    }
+    
+    if (power < 0) {
+        printf("Negative powers not supported\n");
+        return (Matrix){NULL, 0, 0};
+    }
+    
+    if (power == 0) {
+        return identitymatrix(matA.rows);
+    }
+    
+    if (power == 1) {
+        Matrix result = voidmatrix(matA.rows, matA.cols);
+        for (int i = 0; i < matA.rows; ++i) {
+            for (int j = 0; j < matA.cols; ++j) {
+                result.mat[i][j] = matA.mat[i][j];
+            }
+        }
+        return result;
+    }
+    
+    Matrix result = identitymatrix(matA.rows);
+    Matrix base = voidmatrix(matA.rows, matA.cols);
+    
+    // Copy input matrix to base
+    for (int i = 0; i < matA.rows; ++i) {
+        for (int j = 0; j < matA.cols; ++j) {
+            base.mat[i][j] = matA.mat[i][j];
+        }
+    }
+    
+    // Fast exponentiation
+    while (power > 0) {
+        if (power % 2 == 1) {
+            Matrix temp = matrixproduct(result, base);
+            freematrix(result);
+            result = temp;
+        }
+        if (power > 1) {
+            Matrix temp = matrixproduct(base, base);
+            freematrix(base);
+            base = temp;
+        }
+        power /= 2;
+    }
+    
+    freematrix(base);
+    return result;
+}
+
+double conditionnumber(Matrix matA) {
+    if (matA.rows != matA.cols) {
+        printf("Condition number can only be calculated for square matrices\n");
+        return -1.0;
+    }
+    
+    Matrix inv = invert(matA);
+    if (inv.mat == NULL) {
+        printf("Matrix is singular, condition number is infinite\n");
+        return INFINITY;
+    }
+    
+    double norm_A = frobeniusnorm(matA);
+    double norm_inv = frobeniusnorm(inv);
+    
+    freematrix(inv);
+    return norm_A * norm_inv;
+}
+
+Matrix zerosmatrix(int rows, int cols) {
+    return voidmatrix(rows, cols); // voidmatrix already initializes with zeros
+}
+
+Matrix onesmatrix(int rows, int cols) {
+    Matrix result = voidmatrix(rows, cols);
+    if (result.mat == NULL) return result;
+    
+    for (int i = 0; i < rows; ++i) {
+        for (int j = 0; j < cols; ++j) {
+            result.mat[i][j] = 1.0;
+        }
+    }
+    return result;
+}
+
+Matrix hadamardproduct(Matrix matA, Matrix matB) {
+    if (matA.rows != matB.rows || matA.cols != matB.cols) {
+        printf("Hadamard product requires matrices of the same dimensions\n");
+        return (Matrix){NULL, 0, 0};
+    }
+    
+    Matrix result = voidmatrix(matA.rows, matA.cols);
+    if (result.mat == NULL) return result;
+    
+    for (int i = 0; i < matA.rows; ++i) {
+        for (int j = 0; j < matA.cols; ++j) {
+            result.mat[i][j] = matA.mat[i][j] * matB.mat[i][j];
+        }
+    }
+    return result;
+}
+
+Matrix elementwisedivision(Matrix matA, Matrix matB) {
+    if (matA.rows != matB.rows || matA.cols != matB.cols) {
+        printf("Element-wise division requires matrices of the same dimensions\n");
+        return (Matrix){NULL, 0, 0};
+    }
+    
+    Matrix result = voidmatrix(matA.rows, matA.cols);
+    if (result.mat == NULL) return result;
+    
+    for (int i = 0; i < matA.rows; ++i) {
+        for (int j = 0; j < matA.cols; ++j) {
+            if (fabs(matB.mat[i][j]) < 1e-9) {
+                printf("Division by zero encountered at position (%d, %d)\n", i, j);
+                freematrix(result);
+                return (Matrix){NULL, 0, 0};
+            }
+            result.mat[i][j] = matA.mat[i][j] / matB.mat[i][j];
+        }
+    }
+    return result;
+}
+
+int matrixequal(Matrix matA, Matrix matB, double tolerance) {
+    if (matA.rows != matB.rows || matA.cols != matB.cols) {
+        return 0; 
+    }
+    
+    for (int i = 0; i < matA.rows; ++i) {
+        for (int j = 0; j < matA.cols; ++j) {
+            if (fabs(matA.mat[i][j] - matB.mat[i][j]) > tolerance) {
+                return 0; 
+            }
+        }
+    }
+    return 1; 
 }

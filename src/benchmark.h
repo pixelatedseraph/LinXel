@@ -10,7 +10,10 @@
 typedef enum biop{
     add,
     sub,
-    product
+    product,
+    hadamard,
+    elemwise_div,
+    matrix_equal
 }biop;
 /* user provides str , convert it to enum*/
     biop str_to_biop(const char*);
@@ -20,7 +23,12 @@ typedef enum uniop{
     trans,
     inv,
     det,
-    spr
+    spr,
+    trace_op,
+    norm,
+    rank_op,
+    power,
+    cond_num
 }uniop;
 /* user provides string as input ,handle the conversion (convert string to enum) */
 uniop str_to_uniop(const char *s);
@@ -30,6 +38,7 @@ double now ();
 Matrix benchmark(Matrix(*)(Matrix,Matrix),Matrix ,Matrix ,const char*, int);
 Matrix singlebenchmark(Matrix(*)(Matrix),Matrix ,const char*, int);
 double special1singlebenchmark(double(*)(Matrix) ,Matrix ,const char* ,int);
+Matrix special2benchmark(int(*)(Matrix,Matrix,double),Matrix,Matrix,const char*,int);
 int parse_matrix(const char*, int* ,int *);
 int parse_matrix_list(const char*, char***, int*);
 int parse_index_list(const char*, int**, int*);

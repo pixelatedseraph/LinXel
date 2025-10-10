@@ -59,6 +59,26 @@ double special1singlebenchmark(double (*fptr) (Matrix matA) ,Matrix matA  ,const
     return res;
 }
 
+Matrix special2benchmark(int (*fptr)(Matrix, Matrix, double), Matrix matA, Matrix matB, const char* info, int runs) {
+    double total = 0.0, avg = 0.0;
+    int res;
+    for (int i = 0; i < runs; ++i) {
+        double st = now();
+        res = fptr(matA, matB, 1e-9); // default tolerance
+        double en = now();
+        total += en - st;
+    }
+    avg = total / runs;
+    printf("%s ran for : %d times & the average time taken : %.10f \n the total time taken is : %.3f\n", info, runs, avg, total);
+    dotline();
+    
+    Matrix result = voidmatrix(1, 1);
+    if (result.mat != NULL) {
+        result.mat[0][0] = (double)res;
+    }
+    return result;
+}
+
 int parse_matrix(const char* s, int* rows ,int* cols ){
     int res = sscanf(s,"%dx%d",rows,cols);
     if (res != 2)
@@ -113,7 +133,6 @@ int parse_matrix_list(const char* s, char*** matrix_specs, int* count){
     return 1;
 }
 
-/* Parse comma-separated indices for selection */
 int parse_index_list(const char* s, int** indices, int* count){
     if (!s || !indices || !count) return 0;
     
@@ -134,7 +153,6 @@ int parse_index_list(const char* s, int** indices, int* count){
     char* token = strtok(input, ",");
     int i = 0;
     while (token && i < *count) {
-        // Trim whitespace
         while (*token == ' ' || *token == '\t') token++;
         
         int idx = atoi(token);
@@ -160,6 +178,12 @@ Matrix parse_biops(Matrix matA, Matrix matB, biop op){
         return bench_sub(matA,matB);
     case product:
         return bench_product(matA,matB);
+    case hadamard:
+        return bench_hadamard(matA,matB);
+    case elemwise_div:
+        return bench_elemwise_div(matA,matB);
+    case matrix_equal:
+        return bench_matrix_equal(matA,matB);
     default:
         return (Matrix){NULL,0,0};
     }
@@ -176,6 +200,16 @@ Matrix parse_uniops(Matrix matA ,uniop op){
         return bench_determinant(matA);
     case spr:
         return scalarmultiply(5,matA);
+    case trace_op:
+        return bench_trace(matA);
+    case norm:
+        return bench_norm(matA);
+    case rank_op:
+        return bench_rank(matA);
+    case power:
+        return bench_power(matA);
+    case cond_num:
+        return bench_cond_num(matA);
     default:
         return (Matrix) {NULL,0,0};
     }
@@ -184,6 +218,9 @@ biop str_to_biop(const char* s){
     if (strcmp(s,"add")==0) return add;
     if (strcmp(s,"sub")==0) return sub;
     if (strcmp(s,"product")==0) return product;
+    if (strcmp(s,"hadamard")==0) return hadamard;
+    if (strcmp(s,"elemwise_div")==0) return elemwise_div;
+    if (strcmp(s,"matrix_equal")==0) return matrix_equal;
     fprintf(stderr, "Unknown operation: %s\n", s);
     exit(1);
 }
@@ -192,6 +229,11 @@ uniop str_to_uniop(const char *s){
     if (strcmp(s,"inv")==0) return inv;
     if (strcmp(s,"det")==0) return det;
     if (strcmp(s,"spr")==0) return spr;
+    if (strcmp(s,"trace")==0) return trace_op;
+    if (strcmp(s,"norm")==0) return norm;
+    if (strcmp(s,"rank")==0) return rank_op;
+    if (strcmp(s,"power")==0) return power;
+    if (strcmp(s,"cond")==0) return cond_num;
     fprintf(stderr, "undefined operation: %s\n", s);
     exit(1);
 }

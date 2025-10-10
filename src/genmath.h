@@ -31,6 +31,16 @@ Matrix transpose(Matrix);
 Matrix identitymatrix(int);
 double determinant(Matrix);
 Matrix invert(Matrix);
+double trace(Matrix);
+double frobeniusnorm(Matrix);
+int rank(Matrix);
+Matrix matrixpower(Matrix, int);
+double conditionnumber(Matrix);
+Matrix zerosmatrix(int, int);
+Matrix onesmatrix(int, int);
+Matrix hadamardproduct(Matrix, Matrix);
+Matrix elementwisedivision(Matrix, Matrix);
+int matrixequal(Matrix, Matrix, double);
 
 #ifdef __cplusplus
 }
