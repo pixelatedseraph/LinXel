@@ -25,21 +25,21 @@ Clone the repository:
 ```bash
 git clone https://github.com/pixelatedseraph/linxel.git
 cd linxel
-make
+make run
 ```
 ## To use
 ```bash
 ./linxel --help
 Uses :
- [-hp] [-g <m * n>]... [-s <idx>]... [-o <op>] [-r <rep>]...
+ [-hp] [-g <m * n>]... [-s <idx>]... [-o <op>] [-r <rep>]
 
 Options:
   -g, --generate=<m * n>    generate upto 5 matrices of any size by comma-separated list (eg 2x2,3x3,4x4) 
   -s, --select=<idx>        select from the list of matrices by comma-separated indicies (eg 1,2,3) 
-  -o, --operate=<op>        choose one operation from the collection 1.uniops(trans,det,inv,spr) 2.biops(product, add ,sub) 
+  -o, --operate=<op>        choose operation: biops(add,sub,product,hadamard,elemwise_div,matrix_equal) uniops(trans,det,inv,spr,trace,norm,rank,power,cond) 
   -h, --help                Lists out all flags available 
   -p, --print               prints all the generated matrices
-  -r, --repeat=<rep>        repeats the operation (0-10000) 
+  -r, --repeat=<rep>        repeats the operation (1-100000) 
 ```
 ## Example
 ```bash
