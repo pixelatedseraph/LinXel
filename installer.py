@@ -51,7 +51,7 @@ def install():
 def uninstall():
     if dst.exists():
         dst.unlink()
-        print(f"🗑️ Removed {binary_name} binary from {bin_dir}")
+        print(f"Removed {binary_name} binary from {bin_dir}")
     remove_path_from_rc()
     print(" Uninstall complete.")
 
